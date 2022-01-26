@@ -22,12 +22,12 @@ bevy_window = { path = "../bevy_window", version = "0.6.0" }
 bevy_utils = { path = "../bevy_utils", version = "0.6.0" }
 
 # other
-winit = { git = "https://github.com/Heezay/winit", rev = "709eea05543afa41884455f7a34b942a9c6af3c7" }
+winit = { git = "https://github.com/Heezay/winit", rev = "6daa8209d6a11925e5d4f4ffe98495a65c6bfa04" }
 approx = { version = "0.5.0", default-features = false }
 raw-window-handle = "0.4.2"
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
-winit = { git = "https://github.com/Heezay/winit", rev = "709eea05543afa41884455f7a34b942a9c6af3c7" }
+winit = { git = "https://github.com/Heezay/winit", rev = "6daa8209d6a11925e5d4f4ffe98495a65c6bfa04" }
 wasm-bindgen = { version = "0.2" }
 web-sys = "0.3"
 

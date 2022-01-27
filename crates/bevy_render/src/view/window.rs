@@ -130,8 +130,10 @@ pub fn prepare_windows(
             .entry(window.id)
             .or_insert_with(|| unsafe {
                 // NOTE: On some OSes this MUST be called from the main thread.
+                println!("HERERERERERERERERERERE");
                 render_instance.create_surface(&window.handle.get_handle())
             });
+        println!("HERERERERERERERERERERE");
 
         let swap_chain_descriptor = wgpu::SurfaceConfiguration {
             format: TextureFormat::bevy_default(),

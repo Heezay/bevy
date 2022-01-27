@@ -9,7 +9,7 @@ use bevy_ecs::prelude::*;
 use bevy_utils::{tracing::debug, HashMap, HashSet};
 use bevy_window::{RawWindowHandleWrapper, WindowId, Windows};
 use std::ops::{Deref, DerefMut};
-use wgpu::TextureFormat;
+use wgpu::{Surface, TextureFormat};
 
 /// Token to ensure a system runs on the main thread.
 #[derive(Default)]
@@ -26,8 +26,8 @@ impl Plugin for WindowRenderPlugin {
     fn build(&self, app: &mut App) {
         if let Ok(render_app) = app.get_sub_app_mut(RenderApp) {
             render_app
-                .init_resource::<ExtractedWindows>()
-                .init_resource::<WindowSurfaces>()
+                // .init_resource::<ExtractedWindows>()
+                // .init_resource::<WindowSurfaces>()
                 .init_resource::<NonSendMarker>()
                 .add_system_to_stage(RenderStage::Extract, extract_windows)
                 .add_system_to_stage(
@@ -109,7 +109,7 @@ fn extract_windows(mut render_world: ResMut<RenderWorld>, windows: Res<Windows>)
 
 #[derive(Default)]
 pub struct WindowSurfaces {
-    surfaces: HashMap<WindowId, wgpu::Surface>,
+    surfaces: HashMap<WindowId, std::sync::Arc<wgpu::Surface>>,
     /// List of windows that we have already called the initial `configure_surface` for
     configured_windows: HashSet<WindowId>,
 }
@@ -122,17 +122,20 @@ pub fn prepare_windows(
     mut window_surfaces: ResMut<WindowSurfaces>,
     render_device: Res<RenderDevice>,
     render_instance: Res<RenderInstance>,
+    render_surface: Res<std::sync::Arc<wgpu::Surface>>,
 ) {
     let window_surfaces = window_surfaces.deref_mut();
     for window in windows.windows.values_mut() {
-        let surface = window_surfaces
-            .surfaces
-            .entry(window.id)
-            .or_insert_with(|| unsafe {
-                // NOTE: On some OSes this MUST be called from the main thread.
-                println!("HERERERERERERERERERERE");
-                render_instance.create_surface(&window.handle.get_handle())
-            });
+        let surface: &wgpu::Surface =
+            window_surfaces
+                .surfaces
+                .entry(window.id)
+                .or_insert_with(|| unsafe {
+                    // NOTE: On some OSes this MUST be called from the main thread.
+                    // println!("HERERERERERERERERERERE");
+                    // render_instance.create_surface(&window.handle.get_handle())
+                    render_surface.clone()
+                });
         println!("HERERERERERERERERERERE");
 
         let swap_chain_descriptor = wgpu::SurfaceConfiguration {

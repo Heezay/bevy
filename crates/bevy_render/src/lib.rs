@@ -125,10 +125,8 @@ impl Plugin for RenderPlugin {
                 let windows = world.get_resource_mut::<bevy_window::Windows>().unwrap();
                 let raw_handle = windows.get_primary().map(|window| unsafe {
                     let handle = window.raw_window_handle().get_handle();
-                    println!("#### @@#@#@#@#@ALF:LASL:FS");
                     instance.create_surface(&handle)
                 });
-                println!("#### DSDASLFS:ALF:LASL:FS");
                 raw_handle
             };
             let request_adapter_options = wgpu::RequestAdapterOptions {
@@ -171,6 +169,7 @@ impl Plugin for RenderPlugin {
                 )
                 .add_stage(RenderStage::Cleanup, SystemStage::parallel())
                 .insert_resource(instance)
+                .insert_resource(std::sync::Arc::new(surface.unwrap()))
                 .insert_resource(device)
                 .insert_resource(queue)
                 .insert_resource(options)

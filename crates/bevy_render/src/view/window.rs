@@ -122,21 +122,22 @@ pub fn prepare_windows(
     mut window_surfaces: ResMut<WindowSurfaces>,
     render_device: Res<RenderDevice>,
     render_instance: Res<RenderInstance>,
-    render_surface: Res<std::sync::Arc<wgpu::Surface>>,
+    render_surface: Res<std::sync::Arc<Surface>>,
 ) {
     let window_surfaces = window_surfaces.deref_mut();
     for window in windows.windows.values_mut() {
-        let surface: &wgpu::Surface =
-            window_surfaces
-                .surfaces
-                .entry(window.id)
-                .or_insert_with(|| unsafe {
-                    // NOTE: On some OSes this MUST be called from the main thread.
-                    // println!("HERERERERERERERERERERE");
-                    // render_instance.create_surface(&window.handle.get_handle())
+        let surface = window_surfaces
+            .surfaces
+            .entry(window.id)
+            .or_insert_with(|| unsafe {
+                if cfg!(target_os = "android") {
                     render_surface.clone()
-                });
-        println!("HERERERERERERERERERERE");
+                } else {
+                    // NOTE: On some OSes this MUST be called from the main thread.
+                    let surface = render_instance.create_surface(&window.handle.get_handle());
+                    std::sync::Arc::new(surface)
+                }
+            });
 
         let swap_chain_descriptor = wgpu::SurfaceConfiguration {
             format: TextureFormat::bevy_default(),

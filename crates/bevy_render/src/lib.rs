@@ -169,6 +169,7 @@ impl Plugin for RenderPlugin {
                 )
                 .add_stage(RenderStage::Cleanup, SystemStage::parallel())
                 .insert_resource(instance)
+                .insert_resource(std::sync::Arc::new(surface.unwrap()))
                 .insert_resource(device)
                 .insert_resource(queue)
                 .insert_resource(options)

@@ -9,7 +9,7 @@ use bevy_ecs::prelude::*;
 use bevy_utils::{tracing::debug, HashMap, HashSet};
 use bevy_window::{RawWindowHandleWrapper, WindowId, Windows};
 use std::ops::{Deref, DerefMut};
-use wgpu::TextureFormat;
+use wgpu::{Surface, TextureFormat};
 
 /// Token to ensure a system runs on the main thread.
 #[derive(Default)]

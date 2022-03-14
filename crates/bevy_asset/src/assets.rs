@@ -2,8 +2,12 @@ use crate::{
     update_asset_storage_system, Asset, AssetLoader, AssetServer, AssetStage, Handle, HandleId,
     RefChange,
 };
-use bevy_app::{App, EventWriter, Events};
-use bevy_ecs::{system::ResMut, world::FromWorld};
+use bevy_app::App;
+use bevy_ecs::{
+    event::{EventWriter, Events},
+    system::ResMut,
+    world::FromWorld,
+};
 use bevy_utils::HashMap;
 use crossbeam_channel::Sender;
 use std::fmt::Debug;
@@ -182,12 +186,12 @@ impl<T: Asset> Assets<T> {
 
     /// Get a mutable iterator over all assets in the collection.
     pub fn iter_mut(&mut self) -> impl Iterator<Item = (HandleId, &mut T)> {
-        for id in self.assets.keys() {
+        self.assets.iter_mut().map(|(k, v)| {
             self.events.send(AssetEvent::Modified {
-                handle: Handle::weak(*id),
+                handle: Handle::weak(*k),
             });
-        }
-        self.assets.iter_mut().map(|(k, v)| (*k, v))
+            (*k, v)
+        })
     }
 
     /// Get an iterator over all [`HandleId`]'s in the collection.
